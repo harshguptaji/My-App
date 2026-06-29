@@ -67,6 +67,13 @@ export const loginUser = asyncHandler(async(req,res,next) => {
     //Pass empty password field in response
     user.userPassword = undefined;
 
+    res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    });
+
     return res.status(200).json({
         message: "User logged in successfully",
         success: true,

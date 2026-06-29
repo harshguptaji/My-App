@@ -1,5 +1,6 @@
 import express from "express";
 import { connectDB } from "./db_connect.js";
+import cookieParser from "cookie-parser";
 import errorMiddleware from "./Middleware/errorMiddleware.js";
 import userRoute from "./Routes/userRoute.js";
 import dotenv from "dotenv";
@@ -13,6 +14,7 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 
 // APIS
