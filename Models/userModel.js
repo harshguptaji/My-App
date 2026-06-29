@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
 const userSchema = new mongoose.Schema({
@@ -19,7 +19,8 @@ const userSchema = new mongoose.Schema({
     },
     userPassword: {
         type: String,
-        required: true
+        required: true,
+        select: false
     },
     userRole: {
         type: String,
@@ -34,6 +35,16 @@ userSchema.pre("save", async function(){
         this.userPassword = await bcrypt.hash(this.userPassword, 10);
     }
 });
+
+userSchema.methods.comparePassword = async function(enteredPassword){
+    return await bcrypt.compare(enteredPassword, this.userPassword);
+}
+
+userSchema.methods.getJWTToken = function(){
+    return jwt.sign({id: this._id, role: this.userRole}, process.env.JWT_SECRET, {
+        expiresIn: process.env.JWT_EXPIRE
+    });
+}
 
 const User = mongoose.model("User", userSchema);
 

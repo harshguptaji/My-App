@@ -36,4 +36,57 @@ export const registerUser = asyncHandler(async(req,res,next) => {
         message: `User ${userName} registered successfully!`,
         success: true
     })
-})
+});
+
+// Login User
+export const loginUser = asyncHandler(async(req,res,next) => {
+    const {userEmail, userPassword} = req.body;
+
+    if(!userEmail || !userPassword){
+        throw new ErrorHandler("Please fill all the fields", 400);
+    }
+
+    const user = await User.findOne({userEmail}).select("+userPassword");
+
+    if(!user){
+        throw new ErrorHandler("User not found", 404);
+    }
+    
+    const isPasswordMatched = await user.comparePassword(userPassword);
+
+    if(!isPasswordMatched){
+        throw new ErrorHandler("Invalid credentials", 401);
+    }
+
+    const token = user.getJWTToken();
+
+    if(!token){
+        throw new ErrorHandler("Token generation failed", 500);
+    }
+
+    //Pass empty password field in response
+    user.userPassword = undefined;
+
+    return res.status(200).json({
+        message: "User logged in successfully",
+        success: true,
+        user,
+        token
+    })
+});
+
+
+// All Users
+export const getAllUsers = asyncHandler(async(req,res,next) => {
+    const users = await User.find();
+
+    if(!users){
+        throw new ErrorHandler("No users found", 404);
+    }
+
+    return res.status(200).json({
+        message: "Users fetched successfully",
+        success: true,
+        users
+    })
+});
