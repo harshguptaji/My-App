@@ -4,7 +4,7 @@ import errorMiddleware from "./Middleware/errorMiddleware.js";
 import userRoute from "./Routes/userRoute.js";
 import dotenv from "dotenv";
 
-dotenv.config({silent: true});
+dotenv.config({silent: true, debug: true, path: "./.env"});
 
 // Connect to MongoDB
 connectDB();
