@@ -27,6 +27,14 @@ const userSchema = new mongoose.Schema({
         Enum: ["User", "Admin","SuperAdmin","Distributor","DeliveryBoy"],
         default: "User",
         required: true
+    },
+    userVerified: {
+        type: Boolean,
+        default: false
+    },
+    passwordReset: {
+        type: Date,
+        default: null
     }
 },{timestamps: true});
 
